@@ -15,7 +15,7 @@ body {
 }
 
 h1, h2, h3 {
-  color: var(--primary);
+  color: var(--secondary);
 }
 
 .logo h1 {
