@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Market | Головна</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="home">
+  <header class="navbar">
+    <div class="logo">
+      <h1>Music Market</h1>
+    </div>
+    <nav class="nav-links">
+      <a href="/">Головна</a>
+      <a href="/categories">Категорії</a>
+      <a href="/contacts">Контакти</a>
+    </nav>
+    <div class="nav-right">
+      <input type="text" placeholder="Пошук..." />
+      <div id="auth-actions">
+        <a href="/login">Вхід</a>
+        <a href="/register">Реєстрація</a>
+        <!-- або -->
+        <!-- <span class="user-avatar">Д</span> -->
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="welcome">
+      <h2>Ласкаво просимо до Music Market!</h2>
+      <p>Оберіть найкращі товари з нашого асортименту.</p>
+    </section>
+    <section class="popular-products">
+      <h2>Найпопулярніші товари</h2>
+      <div class="product-grid" id="top-products">
+        <!-- Товари будуть підставлені JavaScript -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    &copy; 2025 Music Market. Усі права захищені.
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

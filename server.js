@@ -1,23 +1,55 @@
-const express = require("express");
-const { MongoClient } = require("mongodb");
-require("dotenv").config();
+const express = require('express');
+const { MongoClient, ObjectId } = require('mongodb');
+require('dotenv').config();
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const client = new MongoClient(process.env.MONGO_URI);
+app.use(express.static("public"));
 
-app.get("/products", async (req, res) => {
+const client = new MongoClient(process.env.MONGO_URI);
+let db;
+
+async function connectToMongo() {
+  await client.connect();
+  db = client.db("musicmarket");
+}
+connectToMongo();
+
+app.get("/top-products", async (req, res) => {
   try {
-    await client.connect();
-    const collection = client.db("musicmarket").collection("product");
-    const products = await collection.find({}).toArray();
-    res.json(products);
+    const orderItems = db.collection("orderitem");
+    const products = db.collection("product");
+
+    const top = await orderItems.aggregate([
+      {
+        $group: {
+          _id: "$product_id",
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: 30 },
+      {
+        $lookup: {
+          from: "product",
+          localField: "_id",
+          foreignField: "_id",
+          as: "product"
+        }
+      },
+      { $unwind: "$product" },
+      {
+        $replaceRoot: { newRoot: "$product" }
+      }
+    ]).toArray();
+
+    res.json(top);
   } catch (err) {
-    res.status(500).send("Error: " + err.message);
-  } finally {
-    await client.close();
+    console.error(err);
+    res.status(500).send("Помилка на сервері");
   }
 });
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Сервер запущено на порту ${PORT}`));
