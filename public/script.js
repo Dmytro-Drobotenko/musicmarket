@@ -1,6 +1,4 @@
-// Головна сторінка
-function initHomePage() {
-  document.addEventListener("DOMContentLoaded", async () => {
+async function initHomePage() {
   const container = document.getElementById("top-products");
   try {
     const response = await fetch("/top-products");
@@ -16,8 +14,6 @@ function initHomePage() {
     console.error("Помилка при завантаженні товарів:", error);
     container.innerHTML = "<p>Не вдалося завантажити товари.</p>";
   }
-});
-
 }
 
 // Каталог
@@ -33,12 +29,12 @@ function initContactsPage() {
 }
 
 // Визначаємо сторінку по URL або <body data-page="home">
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const page = document.body.dataset.page;
 
   switch (page) {
     case "home":
-      initHomePage();
+      await initHomePage();
       break;
     case "catalog":
       initCatalogPage();

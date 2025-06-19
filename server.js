@@ -23,37 +23,15 @@ app.get("/", (req, res) => {
 
 app.get("/top-products", async (req, res) => {
   try {
-    const orderItems = db.collection("orderitem");
-    const products = db.collection("product");
+    res.set("Cache-Control", "no-store"); // ✨ важливо
 
-    const top = await orderItems.aggregate([
-      {
-        $group: {
-          _id: "$product_id",
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { count: -1 } },
-      { $limit: 30 },
-      {
-        $lookup: {
-          from: "product",
-          localField: "_id",
-          foreignField: "_id",
-          as: "product"
-        }
-      },
-      { $unwind: "$product" },
-      {
-        $replaceRoot: { newRoot: "$product" }
-      }
-    ]).toArray();
-
-    res.json(top);
+    const products = await db.collection("product").find({}).toArray();
+    res.json(products);
   } catch (err) {
     console.error(err);
     res.status(500).send("Помилка на сервері");
   }
 });
+
 
 app.listen(PORT, () => console.log(`Сервер запущено на порту ${PORT}`));
