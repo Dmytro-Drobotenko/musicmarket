@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Music Market | Головна</title>
+  <title>Music Market | Кошик</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="home">
+<body data-page="cart">
   <header class="navbar">
     <div class="logo">
       <h1>Music Market</h1>
@@ -34,17 +34,28 @@
       </div>
     </div>
   </header>
-  <main>
-    <section class="welcome">
-      <h2>Ласкаво просимо до Music Market!</h2>
-      <p>Оберіть найкращі товари з нашого асортименту.</p>
-    </section>
-    <section class="popular-products">
-      <h2>Найпопулярніші товари</h2>
-      <div class="product-grid" id="top-products">
-        <!-- Товари будуть підставлені JavaScript -->
-      </div>
-    </section>
+
+<main class="container">
+    <h2>Ваш кошик</h2>
+    <table id="cart-table" style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Назва</th>
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: right;">Ціна</th>
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Кількість</th>
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: right;">Разом</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Дані про товари -->
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px; text-align: right;">
+      <h3>Повна ціна: <span id="total-price">0 грн</span></h3>
+      <button class="button" onclick="checkout()">Придбати</button>
+       <button class="button" onclick="clearCart()" style="margin-left: 10px;">Очистити кошик</button>
+    </div>
   </main>
 
   <footer class="footer">

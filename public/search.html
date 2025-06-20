@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Music Market | Головна</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Music Market | Пошук...</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="home">
-  <header class="navbar">
+<body data-page="search">
+    <header class="navbar">
     <div class="logo">
       <h1>Music Market</h1>
     </div>
@@ -34,22 +33,8 @@
       </div>
     </div>
   </header>
-  <main>
-    <section class="welcome">
-      <h2>Ласкаво просимо до Music Market!</h2>
-      <p>Оберіть найкращі товари з нашого асортименту.</p>
-    </section>
-    <section class="popular-products">
-      <h2>Найпопулярніші товари</h2>
-      <div class="product-grid" id="top-products">
-        <!-- Товари будуть підставлені JavaScript -->
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    &copy; 2025 Music Market. Усі права захищені.
-  </footer>
+  <h2>Результати пошуку</h2>
+  <div id="search-results"></div>
   <script src="script.js"></script>
 </body>
 </html>

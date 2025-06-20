@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Market | Авторизація</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="login">
+  <header class="navbar">
+    <div class="logo">
+      <h1>Music Market</h1>
+    </div>
+    <nav class="nav-links">
+      <a href="/">Головна</a>
+      <a href="/categories">Категорії</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="form-section" style="display: flex; flex-direction: column; max-width: 200px; align-items: center; margin: 0 auto;">
+      <h2>Вхід до акаунту</h2>
+      <form id="loginForm" class="auth-form">
+        <label for="login">Ім'я користувача або Email:</label>
+        <input type="text" id="login" name="login" required />
+
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit">Увійти</button>
+        <p id="errorMsg" class="error-message"></p>
+      </form>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

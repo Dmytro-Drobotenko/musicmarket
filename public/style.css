@@ -15,10 +15,11 @@ body {
 }
 
 h1, h2, h3 {
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 .logo h1 {
+  color: var(--secondary);
   margin: 0;
   font-size: 1.8rem;
   font-weight: bold;
@@ -91,7 +92,13 @@ h1, h2, h3 {
   padding: 20px;
   box-shadow: 0 4px 8px rgba(98, 40, 114, 0.1);
   transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
+
+
 
 .product-card:hover {
   transform: translateY(-5px);
@@ -107,9 +114,96 @@ h1, h2, h3 {
 }
 
 .footer {
-  background-color: var(--primary);
-  color: var(--text-light);
+  background-color: var(--secondary);
+  color: var(--text-dark);
   text-align: center;
   padding: 20px;
   margin-top: 40px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+#categoriesList li a {
+  text-decoration: none;
+  color: black;
+  display: block;
+  padding: 5px 10px;
+}
+
+#categoriesList li a:hover {
+  background-color: #f0f0f0;
+}
+
+.product-page .container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.product-image {
+  flex: 1;
+  max-width: 400px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.product-image img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.product-info {
+  flex: 2;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-info h1 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.product-info p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.product-meta {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.product-meta strong {
+  color: var(--primary);
+}
+
+.btn.accent {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn.accent:hover {
+  background-color: var(--secondary);
 }

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Music Market | Реєстрація</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="register">
+    <form id="registerForm" autocomplete="off" style="display: flex; flex-direction: column; max-width: 350px; align-items: center; margin: 0 auto;">
+        <h2>Реєстрація користувача</h2>
+        <label for="firstName" style="width: 100%;">Ім'я:</label>
+        <input type="text" id="firstName" name="firstName" required style="width: 100%; margin-bottom: 10px;">
+
+        <label for="lastName" style="width: 100%;">Прізвище:</label>
+        <input type="text" id="lastName" name="lastName" required style="width: 100%; margin-bottom: 10px;">
+
+        <label for="username" style="width: 100%;">Username:</label>
+        <input type="text" id="username" name="username" required style="width: 100%; margin-bottom: 10px;">
+
+        <label for="email" style="width: 100%;">Email:</label>
+        <input type="email" id="email" name="email" required style="width: 100%; margin-bottom: 10px;">
+
+        <label for="password" style="width: 100%;">Пароль:</label>
+        <input type="password" id="password" name="password" required style="width: 100%; margin-bottom: 10px;">
+
+        <label for="confirmPassword" style="width: 100%;">Підтвердіть пароль:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required style="width: 100%; margin-bottom: 15px;">
+
+        <button type="submit" style="width: 100%;">Зареєструватися</button>
+        <div class="error" id="errorMsg" style="color: red; margin-top: 10px;"></div>
+    </form>
+    <script src="script.js"></script>
+</body>
+</html>
