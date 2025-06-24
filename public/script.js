@@ -1,6 +1,12 @@
 async function initHomePage() {
   const container = document.getElementById("new-products");
-  const searchInput = document.getElementById("searchInput");
+  const role = localStorage.getItem("role");
+  const username = localStorage.getItem("username");
+  const adminLink = document.getElementById("admin-link");
+  if (role === "admin" && username && adminLink) {
+    adminLink.style.display = "inline-block";
+    adminLink.href = `/admin?username=${encodeURIComponent(username)}`;
+  }
   try {
     const response = await fetch('/api/search?sort=date_new')
     const products = await response.json();
@@ -56,6 +62,7 @@ function initRegisterPage() {
   alert(result.message);
   localStorage.setItem("isLoggedIn", "true");
   localStorage.setItem("username", formData.username);
+  localStorage.setItem("role", "user");
   registerForm.reset();
   window.location.href = "/";
   } else {
@@ -74,8 +81,8 @@ function initLoginPage() {
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const login = document.getElementById("login").value;
-    const password = document.getElementById("password").value;
+    const login = document.getElementById("login").value.trim();
+    const password = document.getElementById("password").value.trim();
     const errorMsg = document.getElementById("errorMsg");
 
     try {
@@ -90,6 +97,7 @@ function initLoginPage() {
       if (response.ok) {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("username", result.username);
+        localStorage.setItem("role", result.role);
         window.location.href = "/";
       } else {
         errorMsg.textContent = result.error || "Невірні дані";

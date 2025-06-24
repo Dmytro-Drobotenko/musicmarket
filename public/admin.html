@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Панель адміністратора</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="admin">
+    <header class="navbar">
+    <div class="logo">
+      <h1>Music Market</h1>
+    </div>
+    <nav class="nav-links">
+      <a href="/">Головна</a>
+      <div class="category-wrapper" style="position: relative;">
+        <a href="#" id="categoriesBtn">Категорії</a>
+        <ul id="categoriesList" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ccc; padding: 10px; list-style: none; z-index: 1000; width: 200px;"></ul>
+      </div>
+    </nav>
+    <div class="nav-right">
+      <form id="searchForm" action="/search" method="GET" style="display: flex;">
+        <input type="text" id="searchInput" name="query" placeholder="Пошук товарів..." style="padding: 8px;">
+        <button type="submit">Пошук</button>
+      </form>
+    </div>
+  </header>
+  <main>
+    <div class="container">
+      <h2 class="profile-title" style="text-align: center;">Усі замовлення</h2>
+      <div class="admin-orders" style="margin: 30px auto; max-width: 900px;">
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Користувач</th>
+              <th>Дата створення</th>
+              <th>Сума</th>
+              <th>Статус</th>
+              <th>Деталі</th>
+            </tr>
+          </thead>
+          <tbody id="order-table-body">
+            <!-- Записи будуть підставлені через JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  <script src="/admin.js"></script>
+</body>
+</html>

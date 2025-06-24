@@ -129,17 +129,18 @@ app.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const creationDate = new Date();
-
+    const lastUser = await db.collection('user').find().sort({ _id: -1 }).limit(1).toArray();
+    const newId = lastUser.length > 0 ? lastUser[0]._id + 1 : 1;
     const newUser = {
-      _id: await db.collection('user').countDocuments() + 1,
+      _id: newId,
       name: firstName,
       surname: lastName,
       username,
       email,
       password: hashedPassword,
       role: 'user',
-      phone: "", // бо null не дозволено
-      creation_date: new Date() // тип: BSON date
+      phone: "",
+      creation_date: new Date()
     };
 
 
@@ -177,7 +178,7 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ error: "Невірний пароль" });
     }
 
-    res.json({ message: "Вхід успішний", username: user.username });
+    res.json({ message: "Вхід успішний", username: user.username, role: user.role});
   } catch (err) {
     console.error("Помилка логіну:", err);
     res.status(500).json({ error: "Внутрішня помилка сервера" });
@@ -344,5 +345,94 @@ app.post('/api/checkout', async (req, res) => {
   } catch (err) {
     console.error("Помилка оформлення замовлення:", err);
     res.status(500).json({ error: "Серверна помилка" });
+  }
+});
+
+app.get('/admin', async (req, res) => {
+  const username = req.query.username;
+
+  if (!username) {
+    return res.redirect('/');
+  }
+
+  try {
+    const user = await db.collection('user').findOne({ username });
+
+    if (!user || user.role !== 'admin') {
+      return res.redirect('/');
+    }
+
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  } catch (error) {
+    console.error('Помилка при перевірці ролі адміністратора:', error);
+    res.redirect('/');
+  }
+});
+
+
+app.get('/api/admin/orders', async (req, res) => {
+  try {
+    const orders = await db.collection('order').aggregate([
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $unwind: {
+          path: '$user',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          user_id: 1,
+          username: '$user.username',
+          creation_date: 1,
+          received: 1,
+          sum: 1
+        }
+      },
+      { $sort: { creation_date: -1 } }
+    ]).toArray();
+
+    res.json(orders);
+  } catch (error) {
+    console.error('Помилка отримання замовлень:', error);
+    res.status(500).json({ error: 'Серверна помилка' });
+  }
+});
+
+app.get('/api/admin/orders/:orderId/items', async (req, res) => {
+  try {
+    const orderId = parseInt(req.params.orderId);
+    const items = await db.collection('orderitem').find({ order_id: orderId }).toArray();
+    const order = await db.collection('order').findOne({ _id: orderId });
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    const user = await db.collection('user').findOne(
+      { _id: order.user_id },
+      { projection: { name: 1, surname: 1, email: 1 } }
+    );
+    res.json({
+      success: true,
+      items: items,
+      user: {
+        name: user?.name || 'Невідомо',
+        surname: user?.surname || 'Невідомо',
+        email: user?.email || 'Невідомо'
+      }
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Server error' 
+    });
   }
 });
