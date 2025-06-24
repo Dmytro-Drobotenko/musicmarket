@@ -37,25 +37,71 @@ app.get('/search', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'search.html'));
 });
 
-app.get('/api/search', async (req, res) => {
-  const { query, category } = req.query;
-  const filter = {};
-  
-  if (query) {
-    filter.name = { $regex: query, $options: 'i' };
-  }
-  if (category) {
-    filter.category_id = Number(category);
-  }
+app.get("/api/search", async (req, res) => {
+  const { query, category, sort } = req.query;
 
+  const matchStage = {};
+  if (query) {
+    matchStage.name = { $regex: query, $options: "i" };
+  }
+  if (category && !isNaN(category)) {
+    matchStage.category_id = parseInt(category);
+  }
   try {
-    const products = await db.collection('product').find(filter).toArray();
+    if (sort === "popularity") {
+      const pipeline = [
+        {
+          $group: {
+            _id: "$product_id",
+            salesCount: { $sum: 1 }
+          }
+        },
+        {
+          $sort: { salesCount: -1 }
+        },
+        {
+          $lookup: {
+            from: "product",
+            localField: "_id",
+            foreignField: "_id",
+            as: "product"
+          }
+        },
+        {
+          $unwind: "$product"
+        },
+        {
+          $replaceRoot: { newRoot: "$product" }
+        }
+      ];
+
+      if (query || category) {
+        pipeline.push({ $match: matchStage });
+      }
+
+      const popularProducts = await db.collection("orderitem").aggregate(pipeline).toArray();
+      return res.json(popularProducts);
+    }
+
+    const sortOptions = {
+      price_asc: { price: 1 },
+      price_desc: { price: -1 },
+      date_new: { creation_date: -1 },
+      date_old: { creation_date: 1 }
+    };
+
+    const products = await db.collection("product")
+      .find(matchStage)
+      .sort(sortOptions[sort] || {})
+      .toArray();
+
     res.json(products);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Помилка сервера при пошуку' });
+  } catch (err) {
+    console.error("Помилка пошуку:", err);
+    res.status(500).json({ error: "Помилка пошуку" });
   }
 });
+
 
 app.get('/cart', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'cart.html'));
@@ -138,23 +184,9 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
-app.get("/top-products", async (req, res) => {
-  try {
-    res.set("Cache-Control", "no-store"); // ✨ важливо
-
-    const products = await db.collection("product").find({}).toArray();
-    res.json(products);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Помилка на сервері");
-  }
-});
-
 app.get('/product/:id', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'product.html'));
 });
-
 
 app.get('/api/product/:id', async (req, res) => {
   const productId = parseInt(req.params.id);
@@ -172,3 +204,145 @@ app.get('/api/product/:id', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Сервер запущено на порту ${PORT}`));
+
+app.get('/profile/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
+app.get('/api/profile', async (req, res) => {
+  const username = req.headers['x-username'];
+  if (!username) {
+    return res.status(401).json({ error: 'Необхідна авторизація' });
+  }
+  try {
+    const user = await db.collection('user').findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'Користувача не знайдено' });
+    }
+    res.json({
+      name: user.name,
+      surname: user.surname,
+      username: user.username,
+      email: user.email,
+      phone: user.phone
+    });
+  } catch (error) {
+    console.error('Помилка при отриманні профілю:', error);
+    res.status(500).json({ error: 'Серверна помилка' });
+  }
+});
+
+app.put('/api/profile/phone', async (req, res) => {
+  const username = req.headers['x-username'];
+  const { phone } = req.body;
+  if (!username || !phone) return res.status(400).json({ error: 'Недостатньо даних' });
+
+  try {
+    await db.collection('user').updateOne({ username }, { $set: { phone } });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Помилка оновлення номеру:', err);
+    res.status(500).json({ error: 'Серверна помилка' });
+  }
+});
+
+app.delete('/api/profile/phone', async (req, res) => {
+  const username = req.headers['x-username'];
+  if (!username) return res.status(401).json({ error: 'Необхідна авторизація' });
+
+  try {
+    await db.collection('user').updateOne({ username }, { $unset: { phone: "" } });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Помилка видалення номеру:', err);
+    res.status(500).json({ error: 'Серверна помилка' });
+  }
+});
+
+app.get('/api/orders', async (req, res) => {
+  const username = req.headers['x-username'];
+  if (!username) return res.status(401).json({ error: 'Необхідна авторизація' });
+
+  try {
+    const user = await db.collection('user').findOne({ username });
+    if (!user) return res.status(404).json({ error: 'Користувача не знайдено' });
+
+    const orders = await db.collection('order')
+      .find({ user_id: user._id })
+      .sort({ creation_date: -1 })
+      .toArray();
+
+    res.json(orders);
+  } catch (err) {
+    console.error('Помилка отримання замовлень:', err);
+    res.status(500).json({ error: 'Серверна помилка' });
+  }
+});
+
+app.post('/api/checkout', async (req, res) => {
+  const username = req.headers['x-username'];
+  const items = req.body.items;
+
+  if (!username || !items || !Array.isArray(items)) {
+    return res.status(400).json({ error: 'Невірні дані' });
+  }
+
+  try {
+    const user = await db.collection('user').findOne({ username });
+    if (!user) return res.status(404).json({ error: 'Користувача не знайдено' });
+
+    const productList = await db.collection('product').find({}).toArray();
+    const productMap = Object.fromEntries(productList.map(p => [p._id, p]));
+
+    let totalSum = 0;
+    const orderItems = [];
+    for (const item of items) {
+      const product = productMap[item.productId];
+      if (!product) continue;
+
+      const unitPrice = product.price;
+      const quantity = item.quantity;
+      const subtotal = unitPrice * quantity;
+
+      totalSum += subtotal;
+
+      orderItems.push({
+        productId: item.productId,
+        quantity,
+        unit_price: unitPrice
+      });
+    }
+
+    if (orderItems.length === 0) {
+      return res.status(400).json({ error: 'Жодного дійсного товару не знайдено' });
+    }
+
+    const lastOrder = await db.collection('order')
+      .find().sort({ _id: -1 }).limit(1).toArray();
+    const nextOrderId = lastOrder.length ? lastOrder[0]._id + 1 : 1;
+
+    const orderDoc = {
+      _id: nextOrderId,
+      user_id: parseInt(user._id),
+      received: null,
+      sum: parseFloat(totalSum.toFixed(2)),
+      creation_date: new Date()
+    };
+
+    await db.collection('order').insertOne(orderDoc);
+
+    const orderItemDocs = orderItems.map(item => ({
+      order_id: nextOrderId,
+      product_id: parseInt(item.productId),
+      quantity: parseInt(item.quantity),
+      unit_price: parseFloat(item.unit_price.toFixed(2))
+    }));
+
+    await db.collection('orderitem').insertMany(orderItemDocs);
+
+    res.json({ success: true, orderId: nextOrderId });
+  } catch (err) {
+    console.error("Помилка оформлення замовлення:", err);
+    res.status(500).json({ error: "Серверна помилка" });
+  }
+});

@@ -6,7 +6,7 @@
   <title>Music Market | Головна</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="home">
+<body data-page="profile">
   <header class="navbar">
     <div class="logo">
       <h1>Music Market</h1>
@@ -35,19 +35,40 @@
     </div>
   </header>
   <main>
-    <div class="container">
-      <section class="welcome">
-        <h2>Ласкаво просимо до Music Market!</h2>
-        <p>Оберіть найкращі товари з нашого асортименту.</p>
-      </section>
-      <section class="new-products">
-        <h2>Каталог товарів</h2>
-        <div class="product-grid" id="new-products">
-          <!-- Товари будуть підставлені JavaScript -->
-        </div>
-      </section>
+  <div class="container profile-container">
+    <h2 class="profile-title">Профіль користувача</h2>
+    <div class="profile-error" style="color: red; margin-bottom: 20px;"></div>
+    <div class="profile-info">
+      <div class="profile-row">
+        <strong>Ім'я:</strong> 
+        <span id="profile-name">Завантаження...</span>
+      </div>
+      <div class="profile-row">
+        <strong>Прізвище:</strong> 
+        <span id="profile-surname">Завантаження...</span>
+      </div>
+      <div class="profile-row">
+        <strong>Username:</strong> 
+        <span id="profile-username">Завантаження...</span>
+      </div>
+      <div class="profile-row">
+        <strong>Email:</strong> 
+        <span id="profile-email">Завантаження...</span>
+      </div>
+      <div class="profile-row">
+        <strong>Телефон:</strong>
+        <span id="profile-phone">Завантаження...</span>
+        <button class="btn small" id="edit-phone">Змінити</button>
+        <button class="btn small danger" id="delete-phone">Видалити</button>
+      </div>
     </div>
-  </main>
+    <h3 class="profile-subtitle">Історія замовлень</h3>
+    <div class="order-history" id="order-history">
+      <!-- Тут може бути динамічний контент замовлень -->
+      <div class="no-orders">Історія замовлень порожня</div>
+    </div>
+  </div>
+</main>
   <footer class="footer">
     &copy; 2025 Music Market. Усі права захищені.
   </footer>

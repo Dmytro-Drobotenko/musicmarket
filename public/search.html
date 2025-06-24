@@ -33,8 +33,21 @@
       </div>
     </div>
   </header>
-  <h2>Результати пошуку</h2>
-  <div id="search-results"></div>
+  <div class="container">
+    <div id="sort-container" style="margin: 20px 0;">
+  <label for="sortSelect">Сортувати за:</label>
+  <select id="sortSelect">
+    <option value="">Без сортування</option>
+    <option value="popularity">Популярністю</option>
+    <option value="price_asc">Ціною: спочатку дешевші</option>
+    <option value="price_desc">Ціною: спочатку дорожчі</option>
+    <option value="date_new">Нові надходження</option>
+    <option value="date_old">Старі надходження</option>
+  </select>
+</div>
+    <h2>Результати пошуку</h2>
+    <div id="search-results"></div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
